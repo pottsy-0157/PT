@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workout Detail</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav id="navbar">
+      <!-- Left icons -->
+      <div class="nav-icons left">
+        <i class="fa-solid fa-bars" id="hamburger"></i>
+        <!-- ... -->
+      </div>
+
+      <!-- Center logo + links -->
+      <div class="nav-center">
+        <a href="index.html" class="logo">PT HUB</a>
+        <ul class="nav-links" id="mobileNavLinks">
+          <li><a href="#">CLASSES</a></li>
+          <li><a href="#">BEHIND THE BRAND</a></li>
+          <li><a href="/WORKOUTS.html">WORKOUTS</a></li>
+        </ul>
+      </div>
+      <!-- ... -->
+    </nav>
+
+    <!-- Workout Sessions -->
+    <div class="main-content">
+      <h2>workouts</h2>
+      <h2><span id="friday-date"></span></h2>
+
+      <div
+        class="session-card"
+        onclick="window.location.href='PUSH-CORE.html?name=PUSH-CORE'"
+      >
+        <div class="card-header">
+          <h3>PUSH / CORE</h3>
+          <span class="spaces">YOU GOT THIS!</span>
+        </div>
+        <p><strong>6:00 am – 7:00 am (UK)</strong></p>
+      </div>
+
+      <div class="session-card">
+        <a href="GRIP-RIP.html?name=GRIP AND RIP (ERGS)">
+          <div class="card-header">
+            <h3>GRIP IT AND RIP (ERGS)</h3>
+            <span class="spaces">TOO EASY BABY!</span>
+          </div>
+          <p><strong>6:00 am – 7:00 am (UK)</strong></p>
+        </a>
+      </div>
+
+      <h2><span id="saturday-date"></span></h2>
+
+      <div
+        class="session-card"
+        onclick="window.location.href='SATURDAY-HYROX.html?name=HYROX SATURDAY'"
+      >
+        <div class="card-header">
+          <h3>HYROX SATURDAY</h3>
+          <span class="spaces">IT'S EASY!</span>
+        </div>
+        <p><strong>7:30 am – 8:30 am (UK)</strong></p>
+      </div>
+
+      <!-- Calendar / Schedule -->
+      <section class="schedule" id="schedule">
+        <h2>Calendar / Schedule</h2>
+        <p class="schedule-sub">
+          Weekly planner of workouts. Reminders for booked sessions.
+        </p>
+        <div class="week-controls">
+          <button id="prevWeek" class="week-btn" aria-label="Previous week">
+            ←
+          </button>
+          <div id="weekLabel" class="week-label"></div>
+          <button id="nextWeek" class="week-btn" aria-label="Next week">
+            →
+          </button>
+        </div>
+        <div id="weekGrid" class="week-grid"></div>
+        <div id="reminderToast" class="reminder-toast" aria-live="polite"></div>
+      </section>
+    </div>
+  </body>
+</html>

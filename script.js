@@ -265,11 +265,6 @@ function getWeekdayDate(targetDay) {
 
 // Set dates for session cards
 const dateMap = {
-  "sunday-date": 7 //sun
-  "monday-date": 1 //mon
-  "tuesday-date": 2 // tue
-  "wedensday-date": 3 //wendensday
-  "thursday-date": 4, // thursday
   "friday-date": 5, // Friday
   "saturday-date": 6, // Saturday
 };
@@ -554,4 +549,5 @@ window.addEventListener("DOMContentLoaded", function () {
     });
   }
 })();
+
 

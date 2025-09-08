@@ -31,34 +31,59 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function render() {
-      const start = startOfWeek(anchor);
-      const end = new Date(start.getTime() + MS_DAY * 6);
-      label.textContent = `${start.toLocaleDateString("en-GB")} - ${end.toLocaleDateString("en-GB")}`;
-      grid.innerHTML = "";
+  const start = startOfWeek(anchor);
+  const end = new Date(start.getTime() + MS_DAY * 6);
+  label.textContent = `${start.toLocaleDateString("en-GB")} - ${end.toLocaleDateString("en-GB")}`;
+  grid.innerHTML = "";
 
-      for (let i = 0; i < 7; i++) {
-        const day = new Date(start.getTime() + MS_DAY * i);
-        const dayEl = document.createElement("div");
-        dayEl.className = "day-card";
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(start.getTime() + MS_DAY * i);
+    const dayEl = document.createElement("div");
+    dayEl.className = "day-card";
 
-        const header = document.createElement("div");
-        header.className = "day-header";
-        header.innerHTML = `<span>${formatShort(day)}</span>`;
+    const header = document.createElement("div");
+    header.className = "day-header";
+    header.innerHTML = `<span>${formatShort(day)}</span>`;
 
-        const sessions = document.createElement("div");
-        sessions.className = "day-sessions";
+    const sessions = document.createElement("div");
+    sessions.className = "day-sessions";
 
-        const isFri = day.getDay() === 5;
-        const isSat = day.getDay() === 6;
-        if (isFri) addSession(sessions, "PUSH / CORE", "06:00", day);
-        if (isFri) addSession(sessions, "GRIP AND RIP (ERGS)", "06:00", day);
-        if (isSat) addSession(sessions, "HYROX SATURDAY", "07:30", day);
-
-        dayEl.appendChild(header);
-        dayEl.appendChild(sessions);
-        grid.appendChild(dayEl);
-      }
+    // Assign workouts per day
+    switch(day.getDay()) {
+      case 0: // Sunday
+        addSession(sessions, "Recovery / Mobility", "09:00", day);
+        break;
+      case 1: // Monday
+        addSession(sessions, "Hyrox Conditioning", "06:00", day);
+        addSession(sessions, "Push / Core", "18:00", day);
+        break;
+      case 2: // Tuesday
+        addSession(sessions, "Grip It & Rip It (Ergs)", "06:00", day);
+        addSession(sessions, "Pull / Back + Core", "18:00", day);
+        break;
+      case 3: // Wednesday
+        addSession(sessions, "Hyrox Strength", "06:00", day);
+        addSession(sessions, "Legs / Core", "18:00", day);
+        break;
+      case 4: // Thursday
+        addSession(sessions, "Grip It & Rip It (Ergs)", "06:00", day);
+        addSession(sessions, "Push / Core", "18:00", day);
+        break;
+      case 5: // Friday
+        addSession(sessions, "Hyrox Conditioning", "06:00", day);
+        addSession(sessions, "Grip It & Rip It (Ergs)", "18:00", day);
+        break;
+      case 6: // Saturday
+        addSession(sessions, "Hyrox Saturday (Full Workout)", "07:30", day);
+        break;
     }
+
+    dayEl.appendChild(header);
+    dayEl.appendChild(sessions);
+    grid.appendChild(dayEl);
+  }
+}
+
 
     function addSession(container, name, time, dayDate) {
       const pill = document.createElement("div");
@@ -107,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const [hh, mm] = hhmm.split(":").map((v) => parseInt(v, 10));
       const d = new Date(dayDate);
       d.setHours(hh, mm, 0, 0);
-      return d;
+      return d; 
     }
 
     function formatTime(d) {
@@ -335,6 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })();
 });
+
 
 
 

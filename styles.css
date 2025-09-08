@@ -1073,3 +1073,63 @@ h2 {
   font-size: 0.8rem;
   color: #aaa;
 }
+
+.day-card {
+  margin-bottom: 20px;
+  background: #111;
+  padding: 12px;
+  border-radius: 10px;
+  color: #fff;
+}
+
+.day-header {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.day-sessions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* more space between session cards */
+}
+
+.session-card {
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* spacing between title and buttons */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.session-title {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.session-btns {
+  display: flex;
+  gap: 10px; /* space between buttons */
+}
+
+.remind-btn,
+.addcal-btn {
+  background: #ffea00;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+  transition: background 0.2s ease;
+}
+
+.remind-btn:hover,
+.addcal-btn:hover {
+  background: #ffe033;
+}
+
+
+

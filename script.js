@@ -551,3 +551,127 @@ window.addEventListener("DOMContentLoaded", function () {
   }
 })();
 
+
+
+// ---------------------------
+// Dynamic Dates for Sessions
+// ---------------------------
+function setWorkoutDates() {
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0 = Sunday, 5 = Friday, 6 = Saturday
+
+  // Move to the next Friday
+  const friday = new Date(today);
+  friday.setDate(today.getDate() + ((5 - dayOfWeek + 7) % 7));
+
+  // Saturday after that Friday
+  const saturday = new Date(friday);
+  saturday.setDate(friday.getDate() + 1);
+
+  // Format as "Fri, 6th Sept 2025"
+  const options = { weekday: "short", day: "numeric", month: "short", year: "numeric" };
+  document.getElementById("friday-date").innerText = friday.toLocaleDateString("en-GB", options);
+  document.getElementById("saturday-date").innerText = saturday.toLocaleDateString("en-GB", options);
+}
+setWorkoutDates();
+
+// ---------------------------
+// Weekly Calendar View
+// ---------------------------
+let currentWeekStart = new Date();
+
+// get Monday of current week
+function getWeekStart(date) {
+  const day = date.getDay(); // 0 = Sunday
+  const monday = new Date(date);
+  const diff = (day === 0 ? -6 : 1) - day; // shift so Monday is start
+  monday.setDate(date.getDate() + diff);
+  monday.setHours(0, 0, 0, 0);
+  return monday;
+}
+
+function renderWeek(date) {
+  const weekStart = getWeekStart(date);
+  currentWeekStart = new Date(weekStart);
+  const weekGrid = document.getElementById("weekGrid");
+  const weekLabel = document.getElementById("weekLabel");
+  weekGrid.innerHTML = "";
+
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+
+    const div = document.createElement("div");
+    div.className = "day-cell";
+    div.innerHTML = `<strong>${days[i]}</strong><br>${d.getDate()}/${d.getMonth() + 1}`;
+    weekGrid.appendChild(div);
+  }
+
+  // Update week label
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  weekLabel.innerText = `${weekStart.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short"
+  })} - ${weekEnd.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  })}`;
+}
+
+// Auto-rollover: if current date > Sunday, go to new week
+function autoUpdateWeek() {
+  const today = new Date();
+  const sunday = new Date(getWeekStart(today));
+  sunday.setDate(sunday.getDate() + 6);
+
+  if (today > sunday) {
+    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+  }
+  renderWeek(currentWeekStart);
+}
+
+// Controls
+document.getElementById("prevWeek").addEventListener("click", () => {
+  currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+  renderWeek(currentWeekStart);
+});
+document.getElementById("nextWeek").addEventListener("click", () => {
+  currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+  renderWeek(currentWeekStart);
+});
+
+// Initial render
+autoUpdateWeek();
+
+// ---------------------------
+// Reminder Toasts
+// ---------------------------
+function showReminder(message) {
+  const toast = document.getElementById("reminderToast");
+  toast.innerText = message;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
+}
+
+// Example reminder trigger
+setTimeout(() => showReminder("Don’t forget your workout tomorrow!"), 2000);
+
+// ---------------------------
+// Fix workout links (lowercase)
+// ---------------------------
+document.querySelectorAll(".session-card a, .session-card").forEach((card) => {
+  if (card.tagName === "A") {
+    card.href = card.href.replace(/\.html/i, ".html").toLowerCase();
+  } else if (card.getAttribute("onclick")) {
+    let link = card.getAttribute("onclick").match(/'([^']+)'/)[1];
+    link = link.toLowerCase();
+    card.setAttribute("onclick", `window.location.href='${link}'`);
+  }
+});
+
+
+

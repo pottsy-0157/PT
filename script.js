@@ -1,4 +1,6 @@
-// Dynamic navbar background on scroll
+// ---------------------------
+// Navbar Scroll Effect
+// ---------------------------
 window.addEventListener("scroll", function () {
   const navbar = document.getElementById("navbar");
   if (navbar) {
@@ -6,228 +8,9 @@ window.addEventListener("scroll", function () {
   }
 });
 
-// Weekly planner / reminders
-(function () {
-  const grid = document.getElementById("weekGrid");
-  const label = document.getElementById("weekLabel");
-  const prev = document.getElementById("prevWeek");
-  const next = document.getElementById("nextWeek");
-  const toast = document.getElementById("reminderToast");
-  if (!grid || !label || !prev || !next) return;
-
-  const MS_DAY = 86400000;
-  const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-  let anchor = new Date();
-
-  function startOfWeek(d) {
-    const date = new Date(d);
-    const diff = date.getDate() - date.getDay(); // Sunday start
-    return new Date(date.setDate(diff));
-  }
-
-  function formatShort(date) {
-    return `${weekdays[date.getDay()]} ${date.getDate()}`;
-  }
-
-  function render() {
-    const start = startOfWeek(anchor);
-    const end = new Date(start.getTime() + MS_DAY * 6);
-    label.textContent = `${start.toLocaleDateString(
-      "en-GB"
-    )} - ${end.toLocaleDateString("en-GB")}`;
-    grid.innerHTML = "";
-
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(start.getTime() + MS_DAY * i);
-      const dayEl = document.createElement("div");
-      dayEl.className = "day-card";
-
-      const header = document.createElement("div");
-      header.className = "day-header";
-      header.innerHTML = `<span>${formatShort(day)}</span>`;
-
-      const sessions = document.createElement("div");
-      sessions.className = "day-sessions";
-
-      // Example: put known sessions on Fri/Sat
-      const isFri = day.getDay() === 5;
-      const isSat = day.getDay() === 6;
-      if (isthu) addSession(sessions, "legs", "06:00", day);      
-      if (isFri) addSession(sessions, "PUSH / CORE", "06:00", day);
-      if (isFri) addSession(sessions, "GRIP AND RIP (ERGS)", "06:00", day);
-      if (isSat) addSession(sessions, "HYROX SATURDAY", "07:30", day);
-
-      dayEl.appendChild(header);
-      dayEl.appendChild(sessions);
-      grid.appendChild(dayEl);
-    }
-  }
-
-  function addSession(container, name, time, dayDate) {
-    const pill = document.createElement("div");
-    pill.className = "session-pill";
-    pill.innerHTML = `<span>${time} • ${name}</span>`;
-    const btn = document.createElement("button");
-    btn.className = "remind-btn";
-    btn.textContent = "Remind";
-    btn.addEventListener("click", function () {
-      const dt = combineDateAndTime(dayDate, time);
-      ensureNotificationPermission().then((allowed) => {
-        if (!allowed) {
-          if (toast)
-            toast.textContent = "Enable notifications to receive reminders.";
-          setTimeout(() => {
-            if (toast) toast.textContent = "";
-          }, 2000);
-          return;
-        }
-        const rem = { name, time, when: dt.getTime() };
-        storeReminder(rem);
-        scheduleReminder(rem);
-        if (toast)
-          toast.textContent = `Reminder set for ${name} at ${formatTime(dt)}.`;
-        setTimeout(() => {
-          if (toast && toast.textContent.includes(name)) toast.textContent = "";
-        }, 2000);
-      });
-    });
-
-    const addCal = document.createElement("button");
-    addCal.className = "addcal-btn";
-    addCal.textContent = "+ Calendar";
-    addCal.addEventListener("click", function () {
-      const dt = combineDateAndTime(dayDate, time);
-      downloadICS({
-        title: name,
-        description: `${name} class`,
-        start: dt,
-        durationMinutes: 60,
-      });
-    });
-
-    pill.appendChild(btn);
-    pill.appendChild(addCal);
-    container.appendChild(pill);
-  }
-
-  function combineDateAndTime(dayDate, hhmm) {
-    const [hh, mm] = hhmm.split(":").map((v) => parseInt(v, 10));
-    const d = new Date(dayDate);
-    d.setHours(hh, mm, 0, 0);
-    return d;
-  }
-
-  function formatTime(d) {
-    return d.toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  }
-
-  function ensureNotificationPermission() {
-    return new Promise((resolve) => {
-      if (!("Notification" in window)) return resolve(false);
-      if (Notification.permission === "granted") return resolve(true);
-      if (Notification.permission !== "denied") {
-        Notification.requestPermission().then((perm) =>
-          resolve(perm === "granted")
-        );
-      } else {
-        resolve(false);
-      }
-    });
-  }
-
-  function scheduleReminder(rem) {
-    const delay = rem.when - Date.now();
-    if (delay <= 0) return;
-    setTimeout(() => {
-      try {
-        new Notification(rem.name, { body: `Starting at ${rem.time}` });
-      } catch {}
-    }, Math.min(delay, 2147483647));
-  }
-
-  function storeReminder(rem) {
-    try {
-      const list = JSON.parse(localStorage.getItem("reminders") || "[]");
-      list.push(rem);
-      localStorage.setItem("reminders", JSON.stringify(list));
-    } catch {}
-  }
-
-  // Restore scheduled reminders on load
-  (function restore() {
-    try {
-      const list = JSON.parse(localStorage.getItem("reminders") || "[]");
-      list.forEach((r) => scheduleReminder(r));
-    } catch {}
-  })();
-
-  function pad(n) {
-    return n.toString().padStart(2, "0");
-  }
-  function toICSDate(dt) {
-    const y = dt.getUTCFullYear();
-    const m = pad(dt.getUTCMonth() + 1);
-    const d = pad(dt.getUTCDate());
-    const hh = pad(dt.getUTCHours());
-    const mm = pad(dt.getUTCMinutes());
-    const ss = "00";
-    return `${y}${m}${d}T${hh}${mm}${ss}Z`;
-  }
-  function escapeICS(s) {
-    return String(s)
-      .replace(/\\/g, "\\\\")
-      .replace(/\n/g, "\\n")
-      .replace(/,/g, "\\,")
-      .replace(/;/g, "\\;");
-  }
-  function downloadICS({ title, description, start, durationMinutes }) {
-    const end = new Date(start.getTime() + durationMinutes * 60000);
-    const uid = `${start.getTime()}-${Math.random()
-      .toString(36)
-      .slice(2)}@elev8`;
-    const ics = [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//ELEV8//Schedule//EN",
-      "BEGIN:VEVENT",
-      `UID:${uid}`,
-      `DTSTAMP:${toICSDate(new Date())}`,
-      `DTSTART:${toICSDate(start)}`,
-      `DTEND:${toICSDate(end)}`,
-      `SUMMARY:${escapeICS(title)}`,
-      `DESCRIPTION:${escapeICS(description)}`,
-      "END:VEVENT",
-      "END:VCALENDAR",
-    ].join("\r\n");
-    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${title.replace(/\s+/g, "_")}.ics`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  prev.addEventListener("click", function () {
-    anchor = new Date(anchor.getTime() - MS_DAY * 7);
-    render();
-  });
-  next.addEventListener("click", function () {
-    anchor = new Date(anchor.getTime() + MS_DAY * 7);
-    render();
-  });
-
-  render();
-})();
-
-// Hamburger menu toggle for mobile
+// ---------------------------
+// Hamburger Menu Toggle
+// ---------------------------
 const hamburger = document.getElementById("hamburger");
 const navLinks = document.getElementById("mobileNavLinks");
 if (hamburger && navLinks) {
@@ -236,7 +19,9 @@ if (hamburger && navLinks) {
   });
 }
 
-// Utility: Get next weekday date with ordinal suffix
+// ---------------------------
+// Dynamic Dates for Sessions
+// ---------------------------
 function getWeekdayDate(targetDay) {
   const today = new Date();
   const dayOfWeek = today.getDay();
@@ -245,12 +30,7 @@ function getWeekdayDate(targetDay) {
   const targetDate = new Date(today);
   targetDate.setDate(today.getDate() + diff);
 
-  const options = {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  };
+  const options = { weekday: "short", day: "numeric", month: "short", year: "numeric" };
   let dateStr = targetDate.toLocaleDateString("en-GB", options);
 
   // Ordinal suffix
@@ -264,81 +44,104 @@ function getWeekdayDate(targetDay) {
   return dateStr;
 }
 
-// Set dates for session cards
 const dateMap = {
-  "friday-date": 5, // Friday
-  "saturday-date": 6, // Saturday
+  "friday-date": 5,
+  "saturday-date": 6,
 };
 Object.entries(dateMap).forEach(([id, dayNum]) => {
   const el = document.getElementById(id);
   if (el) el.textContent = getWeekdayDate(dayNum);
 });
 
-// Example class start time (replace with dynamic values if needed)
-const classStart = new Date("2025-09-05T06:00:00+01:00"); // 6:00 am BST, 5 Sept 2025
+// ---------------------------
+// Weekly Calendar View
+// ---------------------------
+let currentWeekStart = new Date();
 
-function formatClassTime(date) {
-  const options = {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-    timeZone: "Europe/London",
-  };
-  return `Started: ${date
-    .toLocaleDateString("en-GB", options)
-    .replace(",", "")} at ${date.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-    timeZone: "Europe/London",
-  })} BST`;
+function getWeekStart(date) {
+  const day = date.getDay();
+  const monday = new Date(date);
+  const diff = (day === 0 ? -6 : 1) - day;
+  monday.setDate(date.getDate() + diff);
+  monday.setHours(0, 0, 0, 0);
+  return monday;
 }
 
-window.addEventListener("DOMContentLoaded", function () {
-  const now = new Date();
-  if (now >= classStart) {
-    document.getElementById("bookingStatus").style.display = "block";
-    document.getElementById("classStartedTime").textContent =
-      formatClassTime(classStart);
-  }
-});
+function renderWeek(date) {
+  const weekStart = getWeekStart(date);
+  currentWeekStart = new Date(weekStart);
+  const weekGrid = document.getElementById("weekGrid");
+  const weekLabel = document.getElementById("weekLabel");
+  if (!weekGrid || !weekLabel) return;
 
-// Show more / less sessions toggle
-const toggleText = document.getElementById("toggleSessionsText");
-const hiddenCards = document.querySelectorAll(".session-card.hidden");
-let showingMore = false;
-if (toggleText) {
-  toggleText.addEventListener("click", function () {
-    showingMore = !showingMore;
-    hiddenCards.forEach((card) => {
-      card.style.display = showingMore ? "block" : "none";
-    });
-    toggleText.textContent = showingMore ? "Show Less" : "Show More";
+  weekGrid.innerHTML = "";
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+
+    const div = document.createElement("div");
+    div.className = "day-cell";
+    div.innerHTML = `<strong>${days[i]}</strong><br>${d.getDate()}/${d.getMonth() + 1}`;
+    weekGrid.appendChild(div);
+  }
+
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  weekLabel.innerText = `${weekStart.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+  })} - ${weekEnd.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  })}`;
+}
+
+function autoUpdateWeek() {
+  const today = new Date();
+  const sunday = new Date(getWeekStart(today));
+  sunday.setDate(sunday.getDate() + 6);
+
+  if (today > sunday) {
+    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+  }
+  renderWeek(currentWeekStart);
+}
+
+const prevBtn = document.getElementById("prevWeek");
+const nextBtn = document.getElementById("nextWeek");
+if (prevBtn) {
+  prevBtn.addEventListener("click", () => {
+    currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+    renderWeek(currentWeekStart);
+  });
+}
+if (nextBtn) {
+  nextBtn.addEventListener("click", () => {
+    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+    renderWeek(currentWeekStart);
   });
 }
 
-document.querySelectorAll(".session-card").forEach((card) => {
-  const dateStr = card.getAttribute("data-date");
-  if (dateStr) {
-    const date = new Date(dateStr);
-    const options = { weekday: "long" };
-    const day = date.toLocaleDateString("en-GB", options);
-    const daySpan = card.querySelector(".session-day");
-    if (daySpan) daySpan.textContent = day;
-  }
-});
+autoUpdateWeek();
 
-document.querySelectorAll(".session-group").forEach((group) => {
-  const dayNum = parseInt(group.getAttribute("data-day"), 10);
-  const dateHeading = group.querySelector(".session-date");
-  if (dateHeading) dateHeading.textContent = getWeekdayDate(dayNum);
-});
+// ---------------------------
+// Reminder Toasts
+// ---------------------------
+function showReminder(message) {
+  const toast = document.getElementById("reminderToast");
+  if (!toast) return;
+  toast.innerText = message;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
+}
+setTimeout(() => showReminder("Don’t forget your workout tomorrow!"), 2000);
 
-// Workout page: copy and toggle logic (delegated; safe if elements absent)
+// ---------------------------
+// Workout Page Copy / Toggle
+// ---------------------------
 window.addEventListener("DOMContentLoaded", function () {
   const copyBtn = document.getElementById("copyWorkoutBtn");
   const workoutText = document.getElementById("workoutText");
@@ -346,25 +149,21 @@ window.addEventListener("DOMContentLoaded", function () {
     copyBtn.addEventListener("click", function () {
       const text = workoutText.innerText.trim();
       if (!text) return;
-      navigator.clipboard
-        .writeText(text)
-        .then(function () {
+      navigator.clipboard.writeText(text).then(
+        () => {
           const original = copyBtn.textContent;
           copyBtn.textContent = "Copied!";
-          setTimeout(function () {
-            copyBtn.textContent = original;
-          }, 1200);
-        })
-        .catch(function () {
+          setTimeout(() => (copyBtn.textContent = original), 1200);
+        },
+        () => {
           const textarea = document.createElement("textarea");
           textarea.value = text;
           document.body.appendChild(textarea);
           textarea.select();
-          try {
-            document.execCommand("copy");
-          } catch (e) {}
+          document.execCommand("copy");
           document.body.removeChild(textarea);
-        });
+        }
+      );
     });
   }
 
@@ -372,7 +171,6 @@ window.addEventListener("DOMContentLoaded", function () {
   const wrapper = document.getElementById("workoutTextWrapper");
   const card = document.getElementById("workoutDetail");
   if (toggleBtn && wrapper) {
-    // Initialize collapsed
     wrapper.style.maxHeight = "0px";
     toggleBtn.setAttribute("aria-expanded", "false");
     toggleBtn.textContent = "Show workout";
@@ -381,17 +179,12 @@ window.addEventListener("DOMContentLoaded", function () {
       const isOpen = wrapper.classList.toggle("open");
       toggleBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
       toggleBtn.textContent = isOpen ? "Hide workout" : "Show workout";
-      if (isOpen) {
-        wrapper.style.maxHeight = wrapper.scrollHeight + "px";
-        if (card) card.classList.add("expanded");
-      } else {
-        wrapper.style.maxHeight = "0px";
-        if (card) card.classList.remove("expanded");
-      }
+      wrapper.style.maxHeight = isOpen ? wrapper.scrollHeight + "px" : "0px";
+      if (card) card.classList.toggle("expanded", isOpen);
     });
   }
 
-  // Subscribe form
+  // Newsletter Subscribe
   const subscribeForm = document.getElementById("subscribeForm");
   const subscribeEmail = document.getElementById("subscribeEmail");
   const subscribeMessage = document.getElementById("subscribeMessage");
@@ -405,7 +198,6 @@ window.addEventListener("DOMContentLoaded", function () {
         subscribeMessage.style.color = "#ff6b6b";
         return;
       }
-      // Simulate success
       subscribeMessage.textContent = "Thanks! You're subscribed.";
       subscribeMessage.style.color = "#9eff9e";
       subscribeEmail.value = "";
@@ -413,7 +205,9 @@ window.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// Simple auth and tracker
+// ---------------------------
+// Simple Auth + Workout Logs
+// ---------------------------
 (function () {
   const loginForm = document.getElementById("loginForm");
   const authEmail = document.getElementById("authEmail");
@@ -450,8 +244,7 @@ window.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem(`user:${email}:password`, pwd);
         window.location.href = "account.html";
       } catch {
-        if (authMessage)
-          authMessage.textContent = "Unable to store credentials.";
+        if (authMessage) authMessage.textContent = "Unable to store credentials.";
       }
     });
   }
@@ -473,13 +266,9 @@ window.addEventListener("DOMContentLoaded", function () {
       const logs = JSON.parse(raw);
       logs.sort((a, b) => b.date.localeCompare(a.date));
 
-      // monthly count
       if (statMonthCount) {
         const now = new Date();
-        const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
-          2,
-          "0"
-        )}`;
+        const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
         const count = logs.filter((l) => (l.date || "").startsWith(ym)).length;
         statMonthCount.textContent = String(count);
       }
@@ -551,117 +340,8 @@ window.addEventListener("DOMContentLoaded", function () {
   }
 })();
 
-
-
 // ---------------------------
-// Dynamic Dates for Sessions
-// ---------------------------
-function setWorkoutDates() {
-  const today = new Date();
-  const dayOfWeek = today.getDay(); // 0 = Sunday, 5 = Friday, 6 = Saturday
-
-  // Move to the next Friday
-  const friday = new Date(today);
-  friday.setDate(today.getDate() + ((5 - dayOfWeek + 7) % 7));
-
-  // Saturday after that Friday
-  const saturday = new Date(friday);
-  saturday.setDate(friday.getDate() + 1);
-
-  // Format as "Fri, 6th Sept 2025"
-  const options = { weekday: "short", day: "numeric", month: "short", year: "numeric" };
-  document.getElementById("friday-date").innerText = friday.toLocaleDateString("en-GB", options);
-  document.getElementById("saturday-date").innerText = saturday.toLocaleDateString("en-GB", options);
-}
-setWorkoutDates();
-
-// ---------------------------
-// Weekly Calendar View
-// ---------------------------
-let currentWeekStart = new Date();
-
-// get Monday of current week
-function getWeekStart(date) {
-  const day = date.getDay(); // 0 = Sunday
-  const monday = new Date(date);
-  const diff = (day === 0 ? -6 : 1) - day; // shift so Monday is start
-  monday.setDate(date.getDate() + diff);
-  monday.setHours(0, 0, 0, 0);
-  return monday;
-}
-
-function renderWeek(date) {
-  const weekStart = getWeekStart(date);
-  currentWeekStart = new Date(weekStart);
-  const weekGrid = document.getElementById("weekGrid");
-  const weekLabel = document.getElementById("weekLabel");
-  weekGrid.innerHTML = "";
-
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(weekStart);
-    d.setDate(weekStart.getDate() + i);
-
-    const div = document.createElement("div");
-    div.className = "day-cell";
-    div.innerHTML = `<strong>${days[i]}</strong><br>${d.getDate()}/${d.getMonth() + 1}`;
-    weekGrid.appendChild(div);
-  }
-
-  // Update week label
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 6);
-  weekLabel.innerText = `${weekStart.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short"
-  })} - ${weekEnd.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric"
-  })}`;
-}
-
-// Auto-rollover: if current date > Sunday, go to new week
-function autoUpdateWeek() {
-  const today = new Date();
-  const sunday = new Date(getWeekStart(today));
-  sunday.setDate(sunday.getDate() + 6);
-
-  if (today > sunday) {
-    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-  }
-  renderWeek(currentWeekStart);
-}
-
-// Controls
-document.getElementById("prevWeek").addEventListener("click", () => {
-  currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-  renderWeek(currentWeekStart);
-});
-document.getElementById("nextWeek").addEventListener("click", () => {
-  currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-  renderWeek(currentWeekStart);
-});
-
-// Initial render
-autoUpdateWeek();
-
-// ---------------------------
-// Reminder Toasts
-// ---------------------------
-function showReminder(message) {
-  const toast = document.getElementById("reminderToast");
-  toast.innerText = message;
-  toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 3000);
-}
-
-// Example reminder trigger
-setTimeout(() => showReminder("Don’t forget your workout tomorrow!"), 2000);
-
-// ---------------------------
-// Fix workout links (lowercase)
+// Fix Workout Links (lowercase)
 // ---------------------------
 document.querySelectorAll(".session-card a, .session-card").forEach((card) => {
   if (card.tagName === "A") {
@@ -672,6 +352,5 @@ document.querySelectorAll(".session-card a, .session-card").forEach((card) => {
     card.setAttribute("onclick", `window.location.href='${link}'`);
   }
 });
-
 
 

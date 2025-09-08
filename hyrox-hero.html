@@ -15,19 +15,29 @@
       <p>📍 Elev8 Athletics</p>
       <p><strong>Coach:</strong> Lewis Potts</p>
     </div>
-
-    <div id="monday-workout" class="collapsible">
-      <div
-        class="session-card"
-        onclick="window.location.href='hyrox-hero.html'"
-      >
-        <div class="card-header">
-          <h3>HYROX HERO</h3>
-          <span class="spaces">YOU GOT THIS!</span>
+    
+<!-- Workout Details Card (collapsible + copy) -->
+    <div class="workout-detail" id="workoutDetail">
+      <div class="workout-title-row">
+        <h2>Today's Workout</h2>
+        <div class="title-actions">
+          <button
+            class="toggle-btn"
+            id="toggleWorkoutBtn"
+            aria-expanded="false"
+            aria-controls="workoutTextWrapper"
+          >
+            Show workout
+          </button>
+          <button
+            class="copy-btn"
+            id="copyWorkoutBtn"
+            aria-label="Copy workout"
+          >
+            Copy
+          </button>
         </div>
-        <p><strong>6:00 am – 7:00 am (UK)</strong></p>
       </div>
-
       <div id="workoutTextWrapper" class="collapsible">
         <div id="workoutText">
           <p><strong>Warm-up</strong></p>

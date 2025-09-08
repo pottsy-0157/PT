@@ -53,6 +53,7 @@ window.addEventListener("scroll", function () {
       // Example: put known sessions on Fri/Sat
       const isFri = day.getDay() === 5;
       const isSat = day.getDay() === 6;
+      if (isthu) addSession(sessions, "legs", "06:00", day);      
       if (isFri) addSession(sessions, "PUSH / CORE", "06:00", day);
       if (isFri) addSession(sessions, "GRIP AND RIP (ERGS)", "06:00", day);
       if (isSat) addSession(sessions, "HYROX SATURDAY", "07:30", day);
@@ -549,3 +550,4 @@ window.addEventListener("DOMContentLoaded", function () {
     });
   }
 })();
+

@@ -1091,34 +1091,35 @@ h2 {
 .day-sessions {
   display: flex;
   flex-direction: column;
-  gap: 12px; /* more space between session cards */
+  gap: 12px; /* space between session rows */
 }
 
 .session-card {
   background: #1a1a1a;
-  padding: 12px;
+  padding: 10px 14px;
   border-radius: 8px;
   display: flex;
-  flex-direction: column;
-  gap: 8px; /* spacing between title and buttons */
+  justify-content: space-between; /* title left, buttons right */
+  align-items: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
 }
 
 .session-title {
-  font-weight: bold;
   font-size: 13px;
+  font-weight: bold;
+  white-space: nowrap; /* keep time + name on one line */
 }
 
 .session-btns {
   display: flex;
-  gap: 10px; /* space between buttons */
+  gap: 8px;
 }
 
 .remind-btn,
 .addcal-btn {
   background: #ffea00;
   border: none;
-  padding: 6px 10px;
+  padding: 5px 10px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;

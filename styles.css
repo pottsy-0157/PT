@@ -1091,39 +1091,40 @@ h2 {
 .day-sessions {
   display: flex;
   flex-direction: column;
-  gap: 12px; /* space between session rows */
+  gap: 16px; /* more space between rows */
 }
 
 .session-card {
   background: #1a1a1a;
-  padding: 10px 14px;
-  border-radius: 8px;
+  padding: 14px 18px;
+  border-radius: 10px;
   display: flex;
-  justify-content: space-between; /* title left, buttons right */
+  justify-content: space-between; /* spread text + buttons */
   align-items: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 }
 
 .session-title {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: bold;
-  white-space: nowrap; /* keep time + name on one line */
+  color: #fff;
+  white-space: nowrap; /* keeps time + workout name on one line */
 }
 
 .session-btns {
   display: flex;
-  gap: 8px;
+  gap: 14px; /* spreads buttons out */
 }
 
 .remind-btn,
 .addcal-btn {
   background: #ffea00;
   border: none;
-  padding: 5px 10px;
-  border-radius: 6px;
+  padding: 8px 14px; /* bigger buttons */
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 13px;
   transition: background 0.2s ease;
 }
 
@@ -1131,6 +1132,3 @@ h2 {
 .addcal-btn:hover {
   background: #ffe033;
 }
-
-
-

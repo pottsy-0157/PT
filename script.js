@@ -10,11 +10,6 @@ window.addEventListener("scroll", function () {
 (function () {
   const grid = document.getElementById("weekGrid");
   const label = document.getElementById("weekLabel");
-  const prev = document.getElementById("prevWeek");
-  const next = document.getElementById("nextWeek");
-  const toast = document.getElementById("reminderToast");
-  if (!grid || !label || !prev || !next) return;
-
   const MS_DAY = 86400000;
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   let anchor = new Date();
@@ -29,75 +24,32 @@ window.addEventListener("scroll", function () {
     return `${weekdays[date.getDay()]} ${date.getDate()}`;
   }
 
-
-
-  // --- Add session function ---
   function addSession(container, name, time, dayDate) {
     const pill = document.createElement("div");
     pill.className = "session-card";
 
-    // Card header
-    const header = document.createElement("div");
-    header.className = "card-header";
-    header.innerHTML = `<h3>${name}</h3><span class="spaces">YOU GOT THIS!</span>`;
-    pill.appendChild(header);
+    const left = document.createElement("div");
+    left.className = "session-title";
+    left.textContent = `${time} • ${name}`;
+    pill.appendChild(left);
 
-    // Time
-    const pTime = document.createElement("p");
-    pTime.innerHTML = `<strong>${time} – ${(parseInt(time.split(":")[0])+1).toString().padStart(2,"0")}:${time.split(":")[1]} (UK)</strong>`;
-    pill.appendChild(pTime);
+    const right = document.createElement("div");
+    right.className = "session-btns";
 
-   
-    });
-
-    // Remind button
     const btn = document.createElement("button");
     btn.className = "remind-btn";
     btn.textContent = "Remind";
-    btn.addEventListener("click", function (e) {
-      e.stopPropagation();
-      const dt = combineDateAndTime(dayDate, time);
-      ensureNotificationPermission().then(allowed => {
-        if (!allowed) {
-          if (toast) toast.textContent = "Enable notifications to receive reminders.";
-          setTimeout(() => { if (toast) toast.textContent = ""; }, 2000);
-          return;
-        }
-        const rem = { name, time, when: dt.getTime() };
-        storeReminder(rem);
-        scheduleReminder(rem);
-        if (toast) toast.textContent = `Reminder set for ${name} at ${formatTime(dt)}.`;
-        setTimeout(() => { if (toast && toast.textContent.includes(name)) toast.textContent = ""; }, 2000);
-      });
-    });
-    pill.appendChild(btn);
+    right.appendChild(btn);
 
-    // Add to calendar
     const addCal = document.createElement("button");
     addCal.className = "addcal-btn";
     addCal.textContent = "+ Calendar";
-    addCal.addEventListener("click", e => {
-      e.stopPropagation();
-      const dt = combineDateAndTime(dayDate, time);
-      downloadICS({ title: name, description: `${name} class`, start: dt, durationMinutes: 60 });
-    });
-    pill.appendChild(addCal);
+    right.appendChild(addCal);
 
+    pill.appendChild(right);
     container.appendChild(pill);
   }
 
-  // --- Combine date and time ---
-  function combineDateAndTime(dayDate, hhmm) {
-    const [hh, mm] = hhmm.split(":").map(v => parseInt(v, 10));
-    const d = new Date(dayDate);
-    d.setHours(hh, mm, 0, 0);
-    return d;
-  }
-
-  // --- Other helper functions (ensureNotificationPermission, scheduleReminder, storeReminder, downloadICS, etc.) ---
-  // Copy your existing ones from your current JS
-
-  // --- Render function ---
   function render() {
     const start = startOfWeek(anchor);
     const end = new Date(start.getTime() + MS_DAY * 6);
@@ -111,12 +63,11 @@ window.addEventListener("scroll", function () {
 
       const header = document.createElement("div");
       header.className = "day-header";
-      header.innerHTML = `<span>${formatShort(day)}</span>`;
+      header.textContent = formatShort(day);
 
       const sessions = document.createElement("div");
       sessions.className = "day-sessions";
 
-      // Assign workouts per day
       switch(day.getDay()) {
         case 0: addSession(sessions, "Recovery / Mobility", "09:00", day); break;
         case 1: addSession(sessions, "Hyrox Conditioning", "06:00", day);
@@ -137,10 +88,6 @@ window.addEventListener("scroll", function () {
       grid.appendChild(dayEl);
     }
   }
-
-  // --- Prev/Next week buttons ---
-  prev.addEventListener("click", function () { anchor = new Date(anchor.getTime() - MS_DAY*7); render(); });
-  next.addEventListener("click", function () { anchor = new Date(anchor.getTime() + MS_DAY*7); render(); });
 
   render();
 })();
@@ -468,6 +415,7 @@ window.addEventListener("DOMContentLoaded", function () {
     });
   }
 })();
+
 
 
 

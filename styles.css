@@ -1082,3 +1082,49 @@ h2 {
   color: #fff;
 }
 
+.day-sessions {
+  display: flex;
+  flex-direction: column;
+  gap: 22px; /* extra space between rows */
+}
+
+.session-card {
+  background: #1a1a1a;
+  padding: 20px 24px; /* bigger padding */
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.session-title {
+  font-size: 18px;  /* bigger text */
+  font-weight: bold;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.session-btns {
+  display: flex;
+  gap: 20px; /* spreads buttons apart more */
+}
+
+.remind-btn,
+.addcal-btn {
+  background: #ffea00;
+  border: none;
+  padding: 12px 20px; /* larger buttons */
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px; /* bigger text inside button */
+  transition: background 0.2s ease;
+}
+
+.remind-btn:hover,
+.addcal-btn:hover {
+  background: #ffe033;
+}
+
+

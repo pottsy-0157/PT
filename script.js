@@ -17,7 +17,6 @@ window.addEventListener("scroll", function () {
 
   const MS_DAY = 86400000;
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
   let anchor = new Date();
 
   function startOfWeek(d) {
@@ -30,12 +29,198 @@ window.addEventListener("scroll", function () {
     return `${weekdays[date.getDay()]} ${date.getDate()}`;
   }
 
+  // --- FULL WORKOUTS DATA ---
+  const workoutsData = {
+    "PUSH / CORE": `
+      <p><strong>Warm-up</strong></p>
+      <ul>
+        <li>5–7 min mixed cardio + shoulder prep</li>
+        <li>2 rounds: 10 band pull-aparts, 10 scap push-ups, 10 PVC pass-throughs</li>
+      </ul>
+      <p><strong>Strength – Push</strong></p>
+      <ul>
+        <li>Barbell Bench Press 5 x 5 @ 75–80%, 2–3 min rest</li>
+        <li>Incline DB Press 3 x 10, 60–90s rest</li>
+        <li>Seated DB Shoulder Press 3 x 10, 60–90s rest</li>
+      </ul>
+      <p><strong>Accessory</strong></p>
+      <ul>
+        <li>Superset x3: 12 Cable Flyes + 12 Triceps Rope Pushdowns</li>
+      </ul>
+      <p><strong>Core Circuit</strong></p>
+      <ul>
+        <li>3 rounds (60s work / 15s rest): Hollow Hold, Dead Bug, Side Plank L/R</li>
+      </ul>
+      <p><strong>Finisher</strong></p>
+      <ul>
+        <li>EMOM 6: 10 Push-ups + 20s Plank</li>
+      </ul>`,
+
+    "GRIP IT & RIP IT (ERGS)": `
+      <p><strong>Warm-up</strong></p>
+      <ul>
+        <li>5 min rowing + mobility</li>
+      </ul>
+      <p><strong>Main</strong></p>
+      <ul>
+        <li>4x 500m rowing sprints @ max effort, 2 min rest</li>
+        <li>3x 250m sprints, 1 min rest</li>
+      </ul>
+      <p><strong>Finisher</strong></p>
+      <ul>
+        <li>Grip farmer carries 3x 40m</li>
+      </ul>`,
+
+    "HYROX SATURDAY": `
+      <p><strong>Warm-up</strong></p>
+      <ul>
+        <li>10 min general cardio + dynamic stretches</li>
+      </ul>
+      <p><strong>Main Circuit</strong></p>
+      <ul>
+        <li>1 km Run</li>
+        <li>1000m SkiErg</li>
+        <li>50 Burpees</li>
+        <li>1000m Row</li>
+        <li>50 Walking Lunges</li>
+      </ul>
+      <p><strong>Core</strong></p>
+      <ul>
+        <li>3 rounds Plank 60s, Side Plank 30s each side</li>
+      </ul>`,
+
+    "Hyrox Conditioning": `
+      <p><strong>Warm-up</strong></p>
+      <ul><li>5–10 min cardio + dynamic stretches</li></ul>
+      <p><strong>Main</strong></p>
+      <ul>
+        <li>AMRAP 20 min: 10 Wall Balls, 15 KB Swings, 10 Burpees</li>
+      </ul>`,
+
+    "Pull / Back + Core": `
+      <p><strong>Warm-up</strong></p>
+      <ul><li>5 min rowing + shoulder prep</li></ul>
+      <p><strong>Strength</strong></p>
+      <ul>
+        <li>Pull-ups 4x8</li>
+        <li>Barbell Row 4x10</li>
+      </ul>
+      <p><strong>Core</strong></p>
+      <ul><li>Hanging Leg Raises 3x12</li></ul>`,
+
+    "Hyrox Strength": `
+      <p><strong>Warm-up</strong></p>
+      <ul><li>5–10 min light cardio</li></ul>
+      <p><strong>Strength Circuit</strong></p>
+      <ul>
+        <li>Deadlift 5x5</li>
+        <li>Front Squat 4x8</li>
+        <li>Overhead Press 3x10</li>
+      </ul>`,
+
+    "Legs / Core": `
+      <p><strong>Warm-up</strong></p>
+      <ul><li>5–7 min bike + dynamic stretches</li></ul>
+      <p><strong>Main</strong></p>
+      <ul>
+        <li>Squat 5x5</li>
+        <li>Lunges 3x12 each leg</li>
+        <li>Romanian Deadlift 3x10</li>
+      </ul>
+      <p><strong>Core</strong></p>
+      <ul><li>Plank 60s x3, Side Plank 30s</li></ul>`,
+
+    "Recovery / Mobility": `
+      <p><strong>Recovery</strong></p>
+      <ul>
+        <li>Foam roll 10 min</li>
+        <li>Stretching 15 min</li>
+        <li>Optional light swim or walk</li>
+      </ul>`
+  };
+
+  // --- Add session function ---
+  function addSession(container, name, time, dayDate) {
+    const pill = document.createElement("div");
+    pill.className = "session-card";
+
+    // Card header
+    const header = document.createElement("div");
+    header.className = "card-header";
+    header.innerHTML = `<h3>${name}</h3><span class="spaces">YOU GOT THIS!</span>`;
+    pill.appendChild(header);
+
+    // Time
+    const pTime = document.createElement("p");
+    pTime.innerHTML = `<strong>${time} – ${(parseInt(time.split(":")[0])+1).toString().padStart(2,"0")}:${time.split(":")[1]} (UK)</strong>`;
+    pill.appendChild(pTime);
+
+    // Collapsible
+    const collapsible = document.createElement("div");
+    collapsible.className = "collapsible";
+    collapsible.innerHTML = workoutsData[name] || "<p>No details available.</p>";
+    pill.appendChild(collapsible);
+
+    // Toggle collapsible
+    pill.addEventListener("click", e => {
+      if (!e.target.classList.contains("remind-btn") && !e.target.classList.contains("addcal-btn")) {
+        collapsible.classList.toggle("open");
+        collapsible.style.maxHeight = collapsible.classList.contains("open") ? collapsible.scrollHeight + "px" : "0px";
+      }
+    });
+
+    // Remind button
+    const btn = document.createElement("button");
+    btn.className = "remind-btn";
+    btn.textContent = "Remind";
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      const dt = combineDateAndTime(dayDate, time);
+      ensureNotificationPermission().then(allowed => {
+        if (!allowed) {
+          if (toast) toast.textContent = "Enable notifications to receive reminders.";
+          setTimeout(() => { if (toast) toast.textContent = ""; }, 2000);
+          return;
+        }
+        const rem = { name, time, when: dt.getTime() };
+        storeReminder(rem);
+        scheduleReminder(rem);
+        if (toast) toast.textContent = `Reminder set for ${name} at ${formatTime(dt)}.`;
+        setTimeout(() => { if (toast && toast.textContent.includes(name)) toast.textContent = ""; }, 2000);
+      });
+    });
+    pill.appendChild(btn);
+
+    // Add to calendar
+    const addCal = document.createElement("button");
+    addCal.className = "addcal-btn";
+    addCal.textContent = "+ Calendar";
+    addCal.addEventListener("click", e => {
+      e.stopPropagation();
+      const dt = combineDateAndTime(dayDate, time);
+      downloadICS({ title: name, description: `${name} class`, start: dt, durationMinutes: 60 });
+    });
+    pill.appendChild(addCal);
+
+    container.appendChild(pill);
+  }
+
+  // --- Combine date and time ---
+  function combineDateAndTime(dayDate, hhmm) {
+    const [hh, mm] = hhmm.split(":").map(v => parseInt(v, 10));
+    const d = new Date(dayDate);
+    d.setHours(hh, mm, 0, 0);
+    return d;
+  }
+
+  // --- Other helper functions (ensureNotificationPermission, scheduleReminder, storeReminder, downloadICS, etc.) ---
+  // Copy your existing ones from your current JS
+
+  // --- Render function ---
   function render() {
     const start = startOfWeek(anchor);
     const end = new Date(start.getTime() + MS_DAY * 6);
-    label.textContent = `${start.toLocaleDateString(
-      "en-GB"
-    )} - ${end.toLocaleDateString("en-GB")}`;
+    label.textContent = `${start.toLocaleDateString("en-GB")} - ${end.toLocaleDateString("en-GB")}`;
     grid.innerHTML = "";
 
     for (let i = 0; i < 7; i++) {
@@ -50,12 +235,21 @@ window.addEventListener("scroll", function () {
       const sessions = document.createElement("div");
       sessions.className = "day-sessions";
 
-      // Example: put known sessions on Fri/Sat
-      const isFri = day.getDay() === 5;
-      const isSat = day.getDay() === 6;
-      if (isFri) addSession(sessions, "PUSH / CORE", "06:00", day);
-      if (isFri) addSession(sessions, "GRIP AND RIP (ERGS)", "06:00", day);
-      if (isSat) addSession(sessions, "HYROX SATURDAY", "07:30", day);
+      // Assign workouts per day
+      switch(day.getDay()) {
+        case 0: addSession(sessions, "Recovery / Mobility", "09:00", day); break;
+        case 1: addSession(sessions, "Hyrox Conditioning", "06:00", day);
+                addSession(sessions, "PUSH / CORE", "18:00", day); break;
+        case 2: addSession(sessions, "GRIP IT & RIP IT (ERGS)", "06:00", day);
+                addSession(sessions, "Pull / Back + Core", "18:00", day); break;
+        case 3: addSession(sessions, "Hyrox Strength", "06:00", day);
+                addSession(sessions, "Legs / Core", "18:00", day); break;
+        case 4: addSession(sessions, "GRIP IT & RIP IT (ERGS)", "06:00", day);
+                addSession(sessions, "PUSH / CORE", "18:00", day); break;
+        case 5: addSession(sessions, "Hyrox Conditioning", "06:00", day);
+                addSession(sessions, "GRIP IT & RIP IT (ERGS)", "18:00", day); break;
+        case 6: addSession(sessions, "HYROX SATURDAY", "07:30", day); break;
+      }
 
       dayEl.appendChild(header);
       dayEl.appendChild(sessions);
@@ -63,165 +257,9 @@ window.addEventListener("scroll", function () {
     }
   }
 
-  function addSession(container, name, time, dayDate) {
-    const pill = document.createElement("div");
-    pill.className = "session-pill";
-    pill.innerHTML = `<span>${time} • ${name}</span>`;
-    const btn = document.createElement("button");
-    btn.className = "remind-btn";
-    btn.textContent = "Remind";
-    btn.addEventListener("click", function () {
-      const dt = combineDateAndTime(dayDate, time);
-      ensureNotificationPermission().then((allowed) => {
-        if (!allowed) {
-          if (toast)
-            toast.textContent = "Enable notifications to receive reminders.";
-          setTimeout(() => {
-            if (toast) toast.textContent = "";
-          }, 2000);
-          return;
-        }
-        const rem = { name, time, when: dt.getTime() };
-        storeReminder(rem);
-        scheduleReminder(rem);
-        if (toast)
-          toast.textContent = `Reminder set for ${name} at ${formatTime(dt)}.`;
-        setTimeout(() => {
-          if (toast && toast.textContent.includes(name)) toast.textContent = "";
-        }, 2000);
-      });
-    });
-
-    const addCal = document.createElement("button");
-    addCal.className = "addcal-btn";
-    addCal.textContent = "+ Calendar";
-    addCal.addEventListener("click", function () {
-      const dt = combineDateAndTime(dayDate, time);
-      downloadICS({
-        title: name,
-        description: `${name} class`,
-        start: dt,
-        durationMinutes: 60,
-      });
-    });
-
-    pill.appendChild(btn);
-    pill.appendChild(addCal);
-    container.appendChild(pill);
-  }
-
-  function combineDateAndTime(dayDate, hhmm) {
-    const [hh, mm] = hhmm.split(":").map((v) => parseInt(v, 10));
-    const d = new Date(dayDate);
-    d.setHours(hh, mm, 0, 0);
-    return d;
-  }
-
-  function formatTime(d) {
-    return d.toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  }
-
-  function ensureNotificationPermission() {
-    return new Promise((resolve) => {
-      if (!("Notification" in window)) return resolve(false);
-      if (Notification.permission === "granted") return resolve(true);
-      if (Notification.permission !== "denied") {
-        Notification.requestPermission().then((perm) =>
-          resolve(perm === "granted")
-        );
-      } else {
-        resolve(false);
-      }
-    });
-  }
-
-  function scheduleReminder(rem) {
-    const delay = rem.when - Date.now();
-    if (delay <= 0) return;
-    setTimeout(() => {
-      try {
-        new Notification(rem.name, { body: `Starting at ${rem.time}` });
-      } catch {}
-    }, Math.min(delay, 2147483647));
-  }
-
-  function storeReminder(rem) {
-    try {
-      const list = JSON.parse(localStorage.getItem("reminders") || "[]");
-      list.push(rem);
-      localStorage.setItem("reminders", JSON.stringify(list));
-    } catch {}
-  }
-
-  // Restore scheduled reminders on load
-  (function restore() {
-    try {
-      const list = JSON.parse(localStorage.getItem("reminders") || "[]");
-      list.forEach((r) => scheduleReminder(r));
-    } catch {}
-  })();
-
-  function pad(n) {
-    return n.toString().padStart(2, "0");
-  }
-  function toICSDate(dt) {
-    const y = dt.getUTCFullYear();
-    const m = pad(dt.getUTCMonth() + 1);
-    const d = pad(dt.getUTCDate());
-    const hh = pad(dt.getUTCHours());
-    const mm = pad(dt.getUTCMinutes());
-    const ss = "00";
-    return `${y}${m}${d}T${hh}${mm}${ss}Z`;
-  }
-  function escapeICS(s) {
-    return String(s)
-      .replace(/\\/g, "\\\\")
-      .replace(/\n/g, "\\n")
-      .replace(/,/g, "\\,")
-      .replace(/;/g, "\\;");
-  }
-  function downloadICS({ title, description, start, durationMinutes }) {
-    const end = new Date(start.getTime() + durationMinutes * 60000);
-    const uid = `${start.getTime()}-${Math.random()
-      .toString(36)
-      .slice(2)}@elev8`;
-    const ics = [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//ELEV8//Schedule//EN",
-      "BEGIN:VEVENT",
-      `UID:${uid}`,
-      `DTSTAMP:${toICSDate(new Date())}`,
-      `DTSTART:${toICSDate(start)}`,
-      `DTEND:${toICSDate(end)}`,
-      `SUMMARY:${escapeICS(title)}`,
-      `DESCRIPTION:${escapeICS(description)}`,
-      "END:VEVENT",
-      "END:VCALENDAR",
-    ].join("\r\n");
-    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${title.replace(/\s+/g, "_")}.ics`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  prev.addEventListener("click", function () {
-    anchor = new Date(anchor.getTime() - MS_DAY * 7);
-    render();
-  });
-  next.addEventListener("click", function () {
-    anchor = new Date(anchor.getTime() + MS_DAY * 7);
-    render();
-  });
+  // --- Prev/Next week buttons ---
+  prev.addEventListener("click", function () { anchor = new Date(anchor.getTime() - MS_DAY*7); render(); });
+  next.addEventListener("click", function () { anchor = new Date(anchor.getTime() + MS_DAY*7); render(); });
 
   render();
 })();
@@ -549,6 +587,7 @@ window.addEventListener("DOMContentLoaded", function () {
     });
   }
 })();
+
 
 
 

@@ -34,93 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- Workout data ---
-  const workoutsData = {
-    "PUSH / CORE": `<p><strong>Warm-up</strong></p>
-      <ul>
-        <li>5–7 min mixed cardio + shoulder prep</li>
-        <li>2 rounds: 10 band pull-aparts, 10 scap push-ups, 10 PVC pass-throughs</li>
-      </ul>
-      <p><strong>Strength – Push</strong></p>
-      <ul>
-        <li>Barbell Bench Press 5 x 5 @ 75–80%, 2–3 min rest</li>
-        <li>Incline DB Press 3 x 10, 60–90s rest</li>
-        <li>Seated DB Shoulder Press 3 x 10, 60–90s rest</li>
-      </ul>
-      <p><strong>Accessory</strong></p>
-      <ul>
-        <li>Superset x3: 12 Cable Flyes + 12 Triceps Rope Pushdowns</li>
-      </ul>
-      <p><strong>Core Circuit</strong></p>
-      <ul>
-        <li>3 rounds (60s work / 15s rest): Hollow Hold, Dead Bug, Side Plank L/R</li>
-      </ul>
-      <p><strong>Finisher</strong></p>
-      <ul>
-        <li>EMOM 6: 10 Push-ups + 20s Plank</li>
-      </ul>`,
-    "GRIP AND RIP (ERGS)": `<p><strong>Warm-up</strong></p>
-      <ul><li>5 min rowing + mobility</li></ul>
-      <p><strong>Main</strong></p>
-      <ul>
-        <li>4x 500m rowing sprints @ max effort, 2 min rest</li>
-        <li>3x 250m sprints, 1 min rest</li>
-      </ul>
-      <p><strong>Finisher</strong></p>
-      <ul><li>Grip farmer carries 3x 40m</li></ul>`,
-    "HYROX SATURDAY": `<p><strong>Warm-up</strong></p>
-      <ul><li>10 min general cardio + dynamic stretches</li></ul>
-      <p><strong>Main Circuit</strong></p>
-      <ul>
-        <li>1 km Run</li>
-        <li>1000m SkiErg</li>
-        <li>50 Burpees</li>
-        <li>1000m Row</li>
-        <li>50 Walking Lunges</li>
-      </ul>
-      <p><strong>Core</strong></p>
-      <ul>
-        <li>3 rounds Plank 60s, Side Plank 30s each side</li>
-      </ul>`,
-    "Hyrox Conditioning": `<p><strong>Warm-up</strong></p>
-      <ul><li>5–10 min cardio + dynamic stretches</li></ul>
-      <p><strong>Main</strong></p>
-      <ul>
-        <li>AMRAP 20 min: 10 Wall Balls, 15 KB Swings, 10 Burpees</li>
-      </ul>`,
-    "Pull / Back + Core": `<p><strong>Warm-up</strong></p>
-      <ul><li>5 min rowing + shoulder prep</li></ul>
-      <p><strong>Strength</strong></p>
-      <ul>
-        <li>Pull-ups 4x8</li>
-        <li>Barbell Row 4x10</li>
-      </ul>
-      <p><strong>Core</strong></p>
-      <ul><li>Hanging Leg Raises 3x12</li></ul>`,
-    "Hyrox Strength": `<p><strong>Warm-up</strong></p>
-      <ul><li>5–10 min light cardio</li></ul>
-      <p><strong>Strength Circuit</strong></p>
-      <ul>
-        <li>Deadlift 5x5</li>
-        <li>Front Squat 4x8</li>
-        <li>Overhead Press 3x10</li>
-      </ul>`,
-    "Legs / Core": `<p><strong>Warm-up</strong></p>
-      <ul><li>5–7 min bike + dynamic stretches</li></ul>
-      <p><strong>Main</strong></p>
-      <ul>
-        <li>Squat 5x5</li>
-        <li>Lunges 3x12 each leg</li>
-        <li>Romanian Deadlift 3x10</li>
-      </ul>
-      <p><strong>Core</strong></p>
-      <ul><li>Plank 60s x3, Side Plank 30s</li></ul>`,
-    "Recovery / Mobility": `<p><strong>Recovery</strong></p>
-      <ul>
-        <li>Foam roll 10 min</li>
-        <li>Stretching 15 min</li>
-        <li>Optional light swim or walk</li>
-      </ul>`
-  };
+ 
 
   // --- Helper Functions ---
   function combineDateAndTime(dayDate, hhmm) {
@@ -426,6 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })();
 });
+
 
 
 

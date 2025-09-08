@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const header=document.createElement("div");
     header.className="card-header";
-    header.innerHTML=`<h3>${name}</h3><span class="spaces">YOU GOT THIS!</span>`;
+    header.innerHTML=`<h3>${name}</h3><span class="spaces"></span>`;
     card.appendChild(header);
 
     const pTime=document.createElement("p");
@@ -329,6 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })();
 });
+
 
 
 

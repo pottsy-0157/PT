@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workout Detail</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <!-- Session Info -->
+    <div class="session-detail">
+      <h2 id="workout-title">HYROX SATURDAY</h2>
+      <p>📅 <span id="saturday-date"></span> | 🕕 7:30 am – 8:30 am (UK)</p>
+      <p>📍 Elev8 Athletics</p>
+      <p><strong>Coach:</strong> Lewis Potts</p>
+    </div>
+
+    <div id="monday-workout" class="collapsible">
+      <div
+        class="session-card"
+        onclick="window.location.href='hyrox-hero.html'"
+      >
+        <div class="card-header">
+          <h3>HYROX HERO</h3>
+          <span class="spaces">YOU GOT THIS!</span>
+        </div>
+        <p><strong>6:00 am – 7:00 am (UK)</strong></p>
+      </div>
+
+      <div id="workoutTextWrapper" class="collapsible">
+        <div id="workoutText">
+          <p><strong>Warm-up</strong></p>
+          <ul>
+            <li>10 min rowing or light jog + dynamic stretches</li>
+          </ul>
+
+          <p><strong>AMRAP 20 min</strong></p>
+          <ul>
+            <li>500m Row</li>
+            <li>20 Wall Balls (20/14 lb)</li>
+            <li>15 Burpees</li>
+            <li>10 Kettlebell Swings (24/16 kg)</li>
+            <li>200m Farmers Carry (heavy dumbbells)</li>
+          </ul>
+
+          <p><strong>Cool-down</strong></p>
+          <ul>
+            <li>Stretching + foam roll 10 min</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class Workout -->
+    <div class="class-card">
+      <h3>HYROX SATURDAY</h3>
+      <div class="class-info">
+        <span>⏱ 45 mins</span>
+        <span>📊 Advanced</span>
+        <span>💪 Sets & Reps</span>
+      </div>
+      <button class="start-btn">▶ Let's get started!</button>
+    </div>
+  </body>
+</html>

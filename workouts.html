@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WORKOUTS</title>
+    <title>Workout Detail</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -12,110 +12,96 @@
     <script defer src="script.js"></script>
   </head>
   <body>
-    <!-- navbar -->
+    <!-- Navbar -->
     <nav id="navbar">
+      <!-- Left icons -->
       <div class="nav-icons left">
         <i class="fa-solid fa-bars" id="hamburger"></i>
+        <!-- ... -->
       </div>
+
+      <!-- Center logo + links -->
       <div class="nav-center">
         <a href="index.html" class="logo">PT HUB</a>
         <ul class="nav-links" id="mobileNavLinks">
           <li><a href="#">CLASSES</a></li>
           <li><a href="#">BEHIND THE BRAND</a></li>
-          <li><a href="workouts.html">WORKOUTS</a></li>
+          <li><a href="/WORKOUTS.html">WORKOUTS</a></li>
         </ul>
       </div>
+      <!-- ... -->
     </nav>
 
-    <!-- workout sessions -->
+    <!-- Workout Sessions -->
     <div class="main-content">
-      <h2>WORKOUTS</h2>
+      <h2>workouts</h2>
 
+      <!-- monday date -->
+      <h2><span id="monday-date"></span></h2>
 
-      <h2 id="monday-date"></h2>
-<div class="session-card" onclick="window.location.href='hyrox-hero.html'">
-  <div class="card-header">
-    <h3>HYROX HERO</h3>
-    <span class="spaces">YOU GOT THIS!</span>
-  </div>
-  <p><strong>6:00 am – 7:00 am (UK)</strong></p>
-</div>
+      <div
+        class="session-card"
+        onclick="window.location.href='lower-easy-run.html?name=lower-easy-run'"
+      >
+        <div class="card-header">
+          <h3>LOWER STRENGTH + EASY RUN</h3>
+          <span class="spaces">YOU GOT THIS!</span>
+        </div>
+        <p><strong>6:00 am – 7:00 am (UK)</strong></p>
+      </div>
+      <!-- tuesday date -->
+      <h2><span id="tuesday-date"></span></h2>
 
+      <div
+        class="session-card"
+        onclick="window.location.href='upper-strength-ski.html?name=upper-strength-ski'"
+      >
+        <div class="card-header">
+          <h3>UPPER STRENGTH + SKI INTERVALS</h3>
+          <span class="spaces">YOU GOT THIS!</span>
+        </div>
+        <p><strong>6:00 am – 7:00 am (UK)</strong></p>
+      </div>
 
+      <!-- friday date -->
+      <h2><span id="friday-date"></span></h2>
 
-<h2 id="wednesday-date"></h2>
-<div class="session-card" onclick="window.location.href='leg-day-domination.html'">
-  <div class="card-header">
-    <h3>LEG DAY DOMINATION</h3>
-    <span class="spaces">CRUSH IT!</span>
-  </div>
-  <p><strong>6:00 am – 7:00 am (UK)</strong></p>
-</div>
-
-<h2 id="thursday-date"></h2>
-<div class="session-card" onclick="window.location.href='active-recovery.html'">
-  <div class="card-header">
-    <h3>ACTIVE RECOVERY</h3>
-    <span class="spaces">RECOVER & RESET</span>
-  </div>
-  <p><strong>6:00 am – 7:00 am (UK)</strong></p>
-</div>
-
-<h2 id="friday-date"></h2>
-<div class="session-card" onclick="window.location.href='upper-body-beast.html'">
-  <div class="card-header">
-    <h3>UPPER BODY BEAST</h3>
-    <span class="spaces">YOU GOT THIS!</span>
-  </div>
-  <p><strong>6:00 am – 7:00 am (UK)</strong></p>
-</div>
-
-<h2 id="saturday-date"></h2>
-<div class="session-card" onclick="window.location.href='cardio-chaos.html'">
-  <div class="card-header">
-    <h3>CARDIO CHAOS</h3>
-    <span class="spaces">BRING THE HEAT!</span>
-  </div>
-  <p><strong>6:00 am – 7:00 am (UK)</strong></p>
-</div>
-
-<h2 id="sunday-date"></h2>
-<div class="session-card" onclick="window.location.href='full-body-fury.html'">
-  <div class="card-header">
-    <h3>FULL BODY FURY</h3>
-    <span class="spaces">FINISH STRONG!</span>
-  </div>
-  <p><strong>6:00 am – 7:00 am (UK)</strong></p>
-</div>
-
-      <h2 id="friday-date"></h2>
-      <div class="session-card" onclick="window.location.href='push-core.html'">
+      <div
+        class="session-card"
+        onclick="window.location.href='PUSH-CORE.html?name=PUSH-CORE'"
+      >
         <div class="card-header">
           <h3>PUSH / CORE</h3>
           <span class="spaces">YOU GOT THIS!</span>
         </div>
-        <p><strong>6:00 am – 7:00 am (uk)</strong></p>
+        <p><strong>6:00 am – 7:00 am (UK)</strong></p>
       </div>
 
-      <div class="session-card" onclick="window.location.href='grip-rip.html'">
-        <div class="card-header">
-          <h3>GRIP IT AND RIP (ERGS)</h3>
-          <span class="spaces">TOO EASY BABY</span>
-        </div>
-        <p><strong>6:00 am – 7:00 am (uk)</strong></p>
+      <div class="session-card">
+        <a href="GRIP-RIP.html?name=GRIP AND RIP (ERGS)">
+          <div class="card-header">
+            <h3>GRIP IT AND RIP (ERGS)</h3>
+            <span class="spaces">TOO EASY BABY!</span>
+          </div>
+          <p><strong>6:00 am – 7:00 am (UK)</strong></p>
+        </a>
       </div>
 
-      <h2 id="saturday-date"></h2>
-      <div class="session-card" onclick="window.location.href='saturday-hyrox.html'">
+      <!-- saturday date -->
+      <h2><span id="saturday-date"></span></h2>
+
+      <div
+        class="session-card"
+        onclick="window.location.href='SATURDAY-HYROX.html?name=HYROX SATURDAY'"
+      >
         <div class="card-header">
           <h3>HYROX SATURDAY</h3>
           <span class="spaces">IT'S EASY!</span>
         </div>
-        <p><strong>7:30 am – 8:30 am (uk)</strong></p>
+        <p><strong>7:30 am – 8:30 am (UK)</strong></p>
       </div>
 
-    
-    <!-- Calendar / Schedule -->
+      <!-- Calendar / Schedule -->
       <section class="schedule" id="schedule">
         <h2>Calendar / Schedule</h2>
         <p class="schedule-sub">
@@ -132,20 +118,10 @@
         </div>
         <div id="weekGrid" class="week-grid"></div>
         <div id="reminderToast" class="reminder-toast" aria-live="polite"></div>
-        <div id="weekLabel"></div>
-<div id="weekGrid"></div>
       </section>
     </div>
   </body>
 </html>
-
-
-
-
-
-
-
-
 
 
 

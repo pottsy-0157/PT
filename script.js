@@ -10,8 +10,14 @@ window.addEventListener("scroll", function () {
 (function () {
   const grid = document.getElementById("weekGrid");
   const label = document.getElementById("weekLabel");
+  const prev = document.getElementById("prevWeek");
+  const next = document.getElementById("nextWeek");
+  const toast = document.getElementById("reminderToast");
+  if (!grid || !label || !prev || !next) return;
+
   const MS_DAY = 86400000;
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
   let anchor = new Date();
 
   function startOfWeek(d) {
@@ -24,36 +30,12 @@ window.addEventListener("scroll", function () {
     return `${weekdays[date.getDay()]} ${date.getDate()}`;
   }
 
-  function addSession(container, name, time, dayDate) {
-    const pill = document.createElement("div");
-    pill.className = "session-card";
-
-    const left = document.createElement("div");
-    left.className = "session-title";
-    left.textContent = `${time} • ${name}`;
-    pill.appendChild(left);
-
-    const right = document.createElement("div");
-    right.className = "session-btns";
-
-    const btn = document.createElement("button");
-    btn.className = "remind-btn";
-    btn.textContent = "Remind";
-    right.appendChild(btn);
-
-    const addCal = document.createElement("button");
-    addCal.className = "addcal-btn";
-    addCal.textContent = "+ Calendar";
-    right.appendChild(addCal);
-
-    pill.appendChild(right);
-    container.appendChild(pill);
-  }
-
   function render() {
     const start = startOfWeek(anchor);
     const end = new Date(start.getTime() + MS_DAY * 6);
-    label.textContent = `${start.toLocaleDateString("en-GB")} - ${end.toLocaleDateString("en-GB")}`;
+    label.textContent = `${start.toLocaleDateString(
+      "en-GB"
+    )} - ${end.toLocaleDateString("en-GB")}`;
     grid.innerHTML = "";
 
     for (let i = 0; i < 7; i++) {
@@ -63,31 +45,201 @@ window.addEventListener("scroll", function () {
 
       const header = document.createElement("div");
       header.className = "day-header";
-      header.textContent = formatShort(day);
+      header.innerHTML = `<span>${formatShort(day)}</span>`;
 
       const sessions = document.createElement("div");
       sessions.className = "day-sessions";
 
-      switch(day.getDay()) {
-        case 0: addSession(sessions, "Recovery / Mobility", "09:00", day); break;
-        case 1: addSession(sessions, "Hyrox Conditioning", "06:00", day);
-                addSession(sessions, "PUSH / CORE", "18:00", day); break;
-        case 2: addSession(sessions, "GRIP IT & RIP IT (ERGS)", "06:00", day);
-                addSession(sessions, "Pull / Back + Core", "18:00", day); break;
-        case 3: addSession(sessions, "Hyrox Strength", "06:00", day);
-                addSession(sessions, "Legs / Core", "18:00", day); break;
-        case 4: addSession(sessions, "GRIP IT & RIP IT (ERGS)", "06:00", day);
-                addSession(sessions, "PUSH / CORE", "18:00", day); break;
-        case 5: addSession(sessions, "Hyrox Conditioning", "06:00", day);
-                addSession(sessions, "GRIP IT & RIP IT (ERGS)", "18:00", day); break;
-        case 6: addSession(sessions, "HYROX SATURDAY", "07:30", day); break;
+      // Example: add stuff to the calendar -----------------------------------------------------
+      const isMon = day.getDay() === 1;
+      const isTue = day.getDay() === 2;
+      const isWed = day.getDay() === 3;
+      const isThu = day.getDay() === 4;
+      const isFri = day.getDay() === 5;
+      const isSat = day.getDay() === 6;
+      if (isMon) {
+        addSession(sessions, "LOWER STRENGTH + EASY RUN", "06:00", day);
       }
+      if (isTue) {
+        addSession(sessions, "MOBILITY + RECOVERY", "06:00", day);
+      }
+      if (isWed) {
+        addSession(sessions, "GRIP AND RIP (ERGS)", "06:00", day);
+      }
+      if (isThu) {
+        addSession(sessions, "MOBILITY + RECOVERY", "06:00", day);
+      }
+      if (isFri) {
+        addSession(sessions, "PUSH / CORE", "06:00", day);
+      }
+      if (isFri) addSession(sessions, "GRIP AND RIP (ERGS)", "06:00", day);
+      if (isSat) addSession(sessions, "HYROX SATURDAY", "07:30", day);
 
       dayEl.appendChild(header);
       dayEl.appendChild(sessions);
       grid.appendChild(dayEl);
     }
   }
+
+  function addSession(container, name, time, dayDate) {
+    const pill = document.createElement("div");
+    pill.className = "session-pill";
+    pill.innerHTML = `<span>${time} • ${name}</span>`;
+    const btn = document.createElement("button");
+    btn.className = "remind-btn";
+    btn.textContent = "Remind";
+    btn.addEventListener("click", function () {
+      const dt = combineDateAndTime(dayDate, time);
+      ensureNotificationPermission().then((allowed) => {
+        if (!allowed) {
+          if (toast)
+            toast.textContent = "Enable notifications to receive reminders.";
+          setTimeout(() => {
+            if (toast) toast.textContent = "";
+          }, 2000);
+          return;
+        }
+        const rem = { name, time, when: dt.getTime() };
+        storeReminder(rem);
+        scheduleReminder(rem);
+        if (toast)
+          toast.textContent = `Reminder set for ${name} at ${formatTime(dt)}.`;
+        setTimeout(() => {
+          if (toast && toast.textContent.includes(name)) toast.textContent = "";
+        }, 2000);
+      });
+    });
+
+    const addCal = document.createElement("button");
+    addCal.className = "addcal-btn";
+    addCal.textContent = "+ Calendar";
+    addCal.addEventListener("click", function () {
+      const dt = combineDateAndTime(dayDate, time);
+      downloadICS({
+        title: name,
+        description: `${name} class`,
+        start: dt,
+        durationMinutes: 60,
+      });
+    });
+
+    pill.appendChild(btn);
+    pill.appendChild(addCal);
+    container.appendChild(pill);
+  }
+
+  function combineDateAndTime(dayDate, hhmm) {
+    const [hh, mm] = hhmm.split(":").map((v) => parseInt(v, 10));
+    const d = new Date(dayDate);
+    d.setHours(hh, mm, 0, 0);
+    return d;
+  }
+
+  function formatTime(d) {
+    return d.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+  }
+
+  function ensureNotificationPermission() {
+    return new Promise((resolve) => {
+      if (!("Notification" in window)) return resolve(false);
+      if (Notification.permission === "granted") return resolve(true);
+      if (Notification.permission !== "denied") {
+        Notification.requestPermission().then((perm) =>
+          resolve(perm === "granted")
+        );
+      } else {
+        resolve(false);
+      }
+    });
+  }
+
+  function scheduleReminder(rem) {
+    const delay = rem.when - Date.now();
+    if (delay <= 0) return;
+    setTimeout(() => {
+      try {
+        new Notification(rem.name, { body: `Starting at ${rem.time}` });
+      } catch {}
+    }, Math.min(delay, 2147483647));
+  }
+
+  function storeReminder(rem) {
+    try {
+      const list = JSON.parse(localStorage.getItem("reminders") || "[]");
+      list.push(rem);
+      localStorage.setItem("reminders", JSON.stringify(list));
+    } catch {}
+  }
+
+  // Restore scheduled reminders on load
+  (function restore() {
+    try {
+      const list = JSON.parse(localStorage.getItem("reminders") || "[]");
+      list.forEach((r) => scheduleReminder(r));
+    } catch {}
+  })();
+
+  function pad(n) {
+    return n.toString().padStart(2, "0");
+  }
+  function toICSDate(dt) {
+    const y = dt.getUTCFullYear();
+    const m = pad(dt.getUTCMonth() + 1);
+    const d = pad(dt.getUTCDate());
+    const hh = pad(dt.getUTCHours());
+    const mm = pad(dt.getUTCMinutes());
+    const ss = "00";
+    return `${y}${m}${d}T${hh}${mm}${ss}Z`;
+  }
+  function escapeICS(s) {
+    return String(s)
+      .replace(/\\/g, "\\\\")
+      .replace(/\n/g, "\\n")
+      .replace(/,/g, "\\,")
+      .replace(/;/g, "\\;");
+  }
+  function downloadICS({ title, description, start, durationMinutes }) {
+    const end = new Date(start.getTime() + durationMinutes * 60000);
+    const uid = `${start.getTime()}-${Math.random()
+      .toString(36)
+      .slice(2)}@elev8`;
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//ELEV8//Schedule//EN",
+      "BEGIN:VEVENT",
+      `UID:${uid}`,
+      `DTSTAMP:${toICSDate(new Date())}`,
+      `DTSTART:${toICSDate(start)}`,
+      `DTEND:${toICSDate(end)}`,
+      `SUMMARY:${escapeICS(title)}`,
+      `DESCRIPTION:${escapeICS(description)}`,
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${title.replace(/\s+/g, "_")}.ics`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  prev.addEventListener("click", function () {
+    anchor = new Date(anchor.getTime() - MS_DAY * 7);
+    render();
+  });
+  next.addEventListener("click", function () {
+    anchor = new Date(anchor.getTime() + MS_DAY * 7);
+    render();
+  });
 
   render();
 })();
@@ -131,6 +283,10 @@ function getWeekdayDate(targetDay) {
 
 // Set dates for session cards
 const dateMap = {
+  "monday-date": 1, // Monday
+  "tuesday-date": 2, // Tuesday
+  "wednesday-date": 3, // Wednesday
+  "thursday-date": 4, // Thursday
   "friday-date": 5, // Friday
   "saturday-date": 6, // Saturday
 };
@@ -140,6 +296,7 @@ Object.entries(dateMap).forEach(([id, dayNum]) => {
 });
 
 // Example class start time (replace with dynamic values if needed)
+
 const classStart = new Date("2025-09-05T06:00:00+01:00"); // 6:00 am BST, 5 Sept 2025
 
 function formatClassTime(date) {
@@ -415,13 +572,6 @@ window.addEventListener("DOMContentLoaded", function () {
     });
   }
 })();
-
-
-
-
-
-
-
 
 
 

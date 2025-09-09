@@ -573,11 +573,3 @@ window.addEventListener("DOMContentLoaded", function () {
   }
 })();
 
-
-
-
-
-
-
-
-
